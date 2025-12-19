@@ -1,26 +1,9 @@
-const Leave = require("../models/Leave.model");
+const Leave = require("../models/Leave");
 
 exports.applyLeave = async (req, res) => {
-  const leave = await Leave.create({
-    employee: req.employeeId,
-    ...req.body,
-  });
-  res.status(201).json(leave);
+  res.json(await Leave.create(req.body));
 };
 
-exports.updateLeave = async (req, res) => {
-  const leave = await Leave.findById(req.params.id).populate("employee");
-
-  if (req.user.role === "MANAGER") {
-    if (leave.employee.user.toString() === req.user.id)
-      return res.status(403).json({ message: "Cannot approve own leave" });
-    leave.status = "APPROVED_BY_MANAGER";
-  }
-
-  if (req.user.role === "ADMIN") {
-    leave.status = req.body.status;
-  }
-
-  await leave.save();
-  res.json(leave);
+exports.getLeaves = async (req, res) => {
+  res.json(await Leave.find().populate("employee"));
 };
