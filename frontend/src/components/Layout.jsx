@@ -5,10 +5,14 @@ import Navbar from "./Navbar";
 export default function Layout() {
   return (
     <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
       <Sidebar />
-      <div className="flex-1">
+
+      {/* Main content */}
+      <div className="flex-1 flex flex-col">
         <Navbar />
-        <main className="p-6">
+
+        <main className="flex-1 p-6 overflow-y-auto">
           <Outlet />
         </main>
       </div>
