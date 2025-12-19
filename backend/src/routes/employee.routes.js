@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const {
-  createEmployee,
-  getEmployees
+  getEmployees,
 } = require("../controllers/employee.controller");
 
-router.post("/", createEmployee);
-router.get("/", getEmployees);
+const { protect } = require("../middleware/auth.middleware");
+
+router.get("/", protect, getEmployees);
 
 module.exports = router;
