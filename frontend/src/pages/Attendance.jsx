@@ -1,64 +1,121 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../api/axios";
-import { useAuth } from "../context/AuthContext";
 
-export default function Attendance() {
-  const { user } = useAuth();
-  const [records, setRecords] = useState([]);
+const Attendance = () => {
+  const [employees, setEmployees] = useState([]);
+  const [status, setStatus] = useState("PRESENT");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    api.get("/attendance").then((res) => setRecords(res.data));
+    api.get("/employees").then((res) => setEmployees(res.data));
   }, []);
 
-  const markAttendance = async (status) => {
-    await api.post("/attendance", { status });
-    const res = await api.get("/attendance");
-    setRecords(res.data);
+  const checkIn = async () => {
+    try {
+      setLoading(true);
+      const res = await api.post("/attendance/check-in");
+      alert(res.data.message);
+    } catch (err) {
+      alert(err.response?.data?.message || "Check-in failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkOut = async () => {
+    try {
+      setLoading(true);
+      const res = await api.post("/attendance/check-out");
+      alert(res.data.message);
+    } catch (err) {
+      alert(err.response?.data?.message || "Check-out failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markAttendance = async (employeeId) => {
+    try {
+      await api.post("/attendance/mark", {
+        employeeId,
+        status,
+      });
+      alert("Attendance marked successfully");
+    } catch (err) {
+      alert("Failed to mark attendance");
+    }
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-6">
-        {user.role === "EMPLOYEE" ? "My Attendance" : "Attendance"}
-      </h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-semibold mb-6">Attendance</h1>
 
-      {user.role === "EMPLOYEE" && (
-        <div className="flex gap-4 mb-6">
-          <button
-            onClick={() => markAttendance("PRESENT")}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+      {/* Employee Self Attendance */}
+      <div className="bg-white p-5 rounded-lg shadow mb-6 flex gap-4">
+        <button
+          onClick={checkIn}
+          disabled={loading}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          Check In
+        </button>
+        <button
+          onClick={checkOut}
+          disabled={loading}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 disabled:opacity-50"
+        >
+          Check Out
+        </button>
+      </div>
+
+      {/* Admin / Manager Manual Mark */}
+      <div className="bg-white p-5 rounded-lg shadow">
+        <div className="flex items-center gap-4 mb-4">
+          <label className="font-medium">Status</label>
+          <select
+            className="border rounded px-3 py-2"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
           >
-            Mark Present
-          </button>
+            <option value="PRESENT">Present</option>
+            <option value="ABSENT">Absent</option>
+            <option value="LEAVE">Leave</option>
+          </select>
         </div>
-      )}
 
-      <div className="bg-white shadow rounded overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-100">
+        <table className="w-full border">
+          <thead className="bg-gray-200">
             <tr>
-              <th className="p-3 border">Date</th>
-              {user.role !== "EMPLOYEE" && <th className="p-3 border">Employee</th>}
-              <th className="p-3 border">Status</th>
-              <th className="p-3 border">Check In</th>
-              <th className="p-3 border">Check Out</th>
+              <th className="p-3 border text-left">Employee</th>
+              <th className="p-3 border text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            {records.map((r) => (
-              <tr key={r._id}>
-                <td className="p-3 border">{new Date(r.date).toLocaleDateString()}</td>
-                {user.role !== "EMPLOYEE" && (
-                  <td className="p-3 border">{r.employee?.name}</td>
-                )}
-                <td className="p-3 border">{r.status}</td>
-                <td className="p-3 border">{r.checkIn || "-"}</td>
-                <td className="p-3 border">{r.checkOut || "-"}</td>
+            {employees.map((emp) => (
+              <tr key={emp._id}>
+                <td className="p-3 border">{emp.name}</td>
+                <td className="p-3 border text-center">
+                  <button
+                    onClick={() => markAttendance(emp._id)}
+                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+                  >
+                    Mark
+                  </button>
+                </td>
               </tr>
             ))}
+            {employees.length === 0 && (
+              <tr>
+                <td colSpan="2" className="p-4 text-center text-gray-500">
+                  No employees found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
     </div>
   );
-}
+};
+
+export default Attendance;

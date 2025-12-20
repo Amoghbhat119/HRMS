@@ -1,26 +1,39 @@
-require("dotenv").config();
 const express = require("express");
+const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
-const app = express();
+dotenv.config();
 connectDB();
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/auth", require("./routes/auth.routes"));
-app.use("/api/employees", require("./routes/employee.routes"));
-app.use("/api/attendance", require("./routes/attendance.routes"));
-app.use("/api/leaves", require("./routes/leave.routes"));
-app.use("/api/payroll", require("./routes/payroll.routes"));
-app.use("/api/dashboard", require("./routes/dashboard.routes"));
-app.use("/api/departments", require("./routes/department.routes"));
-app.use("/api/designations", require("./routes/designation.routes"));
-app.use("/api/reports", require("./routes/report.routes"));
+// ================= IMPORT ROUTES =================
+const authRoutes = require("./routes/auth.routes");
+const employeeRoutes = require("./routes/employee.routes");
+const departmentRoutes = require("./routes/department.routes");
+const designationRoutes = require("./routes/designation.routes");
+const attendanceRoutes = require("./routes/attendance.routes");
+const leaveRoutes = require("./routes/leave.routes");
+const dashboardRoutes = require("./routes/dashboard.routes"); // ✅ THIS WAS MISSING
+const payrollRoutes = require("./routes/payroll.routes");
+const reportRoutes = require("./routes/report.routes");
 
+// ================= REGISTER ROUTES =================
+app.use("/api/auth", authRoutes);
+app.use("/api/employees", employeeRoutes);
+app.use("/api/departments", departmentRoutes);
+app.use("/api/designations", designationRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/leave", leaveRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/payroll", payrollRoutes);
+app.use("/api/report", reportRoutes);
 
+// ================= START SERVER =================
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on port ${PORT}`)
-);
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});

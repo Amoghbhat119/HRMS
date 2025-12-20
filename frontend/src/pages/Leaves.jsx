@@ -1,81 +1,167 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 
-export default function Leaves() {
-  const { user } = useAuth();
+const Leaves = () => {
+  const { user } = useAuth(); // ✅ CORRECT
   const [leaves, setLeaves] = useState([]);
-  const [form, setForm] = useState({ type: "CASUAL", fromDate: "", toDate: "", reason: "" });
+  const [form, setForm] = useState({
+    fromDate: "",
+    toDate: "",
+    reason: "",
+  });
+
+  const fetchLeaves = async () => {
+    const res = await api.get("/leave");
+    setLeaves(res.data);
+  };
 
   useEffect(() => {
-    api.get("/leaves").then((res) => setLeaves(res.data));
+    fetchLeaves();
   }, []);
 
   const applyLeave = async () => {
-    await api.post("/leaves", form);
-    const res = await api.get("/leaves");
-    setLeaves(res.data);
+    if (!form.fromDate || !form.toDate) {
+      alert("Please select dates");
+      return;
+    }
+
+    try {
+      await api.post("/leave/apply", form);
+      alert("Leave applied successfully");
+      setForm({ fromDate: "", toDate: "", reason: "" });
+      fetchLeaves();
+    } catch (err) {
+      alert(err.response?.data?.message || "Leave application failed");
+    }
   };
 
-  const updateStatus = async (id, status) => {
-    await api.put(`/leaves/${id}`, { status });
-    const res = await api.get("/leaves");
-    setLeaves(res.data);
+  const approveLeave = async (id) => {
+    try {
+      await api.post(`/leave/approve/${id}`);
+      alert("Leave approved");
+      fetchLeaves();
+    } catch (err) {
+      alert(err.response?.data?.message);
+    }
   };
+
+  const rejectLeave = async (id) => {
+    try {
+      await api.post(`/leave/reject/${id}`);
+      alert("Leave rejected");
+      fetchLeaves();
+    } catch (err) {
+      alert(err.response?.data?.message);
+    }
+  };
+
+  // ⏳ User not loaded yet
+  if (!user) {
+    return (
+      <div className="p-6 text-gray-500">
+        Loading leave data...
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-6">Leaves</h1>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-semibold mb-6">Leave Management</h1>
 
-      {user.role === "EMPLOYEE" && (
-        <div className="bg-white p-4 shadow rounded mb-6">
-          <h2 className="font-semibold mb-4">Apply Leave</h2>
-          <div className="grid grid-cols-4 gap-4">
-            <select className="border p-2" onChange={(e) => setForm({ ...form, type: e.target.value })}>
-              <option>CASUAL</option>
-              <option>SICK</option>
-              <option>EARNED</option>
-            </select>
-            <input type="date" className="border p-2" onChange={(e) => setForm({ ...form, fromDate: e.target.value })} />
-            <input type="date" className="border p-2" onChange={(e) => setForm({ ...form, toDate: e.target.value })} />
-            <button onClick={applyLeave} className="bg-blue-600 text-white rounded">
-              Submit
-            </button>
-          </div>
+      {/* APPLY LEAVE — ONLY EMPLOYEE / MANAGER */}
+      {(user.role === "EMPLOYEE" || user.role === "MANAGER") && (
+        <div className="bg-white p-5 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <input
+            type="date"
+            className="border rounded px-3 py-2"
+            value={form.fromDate}
+            onChange={(e) =>
+              setForm({ ...form, fromDate: e.target.value })
+            }
+          />
+          <input
+            type="date"
+            className="border rounded px-3 py-2"
+            value={form.toDate}
+            onChange={(e) =>
+              setForm({ ...form, toDate: e.target.value })
+            }
+          />
+          <input
+            type="text"
+            placeholder="Reason"
+            className="border rounded px-3 py-2"
+            value={form.reason}
+            onChange={(e) =>
+              setForm({ ...form, reason: e.target.value })
+            }
+          />
+          <button
+            onClick={applyLeave}
+            className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700"
+          >
+            Apply Leave
+          </button>
         </div>
       )}
 
-      <div className="bg-white shadow rounded">
-        <table className="w-full">
-          <thead className="bg-gray-100">
+      {/* LEAVE TABLE */}
+      <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <table className="w-full border">
+          <thead className="bg-gray-200">
             <tr>
-              {user.role !== "EMPLOYEE" && <th className="p-3 border">Employee</th>}
-              <th className="p-3 border">Dates</th>
-              <th className="p-3 border">Type</th>
+              <th className="p-3 border">Employee</th>
+              <th className="p-3 border">Period</th>
               <th className="p-3 border">Status</th>
-              {user.role !== "EMPLOYEE" && <th className="p-3 border">Action</th>}
+              <th className="p-3 border text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            {leaves.map((l) => (
-              <tr key={l._id}>
-                {user.role !== "EMPLOYEE" && <td className="p-3 border">{l.employee?.name}</td>}
+            {leaves.map((leave) => (
+              <tr key={leave._id}>
+                <td className="p-3 border">{leave.employee?.name}</td>
                 <td className="p-3 border">
-                  {new Date(l.fromDate).toLocaleDateString()} - {new Date(l.toDate).toLocaleDateString()}
+                  {leave.fromDate} → {leave.toDate}
                 </td>
-                <td className="p-3 border">{l.type}</td>
-                <td className="p-3 border">{l.status}</td>
-                {user.role !== "EMPLOYEE" && (
-                  <td className="p-3 border space-x-2">
-                    <button onClick={() => updateStatus(l._id, "APPROVED")} className="text-green-600">Approve</button>
-                    <button onClick={() => updateStatus(l._id, "REJECTED")} className="text-red-600">Reject</button>
-                  </td>
-                )}
+                <td className="p-3 border font-semibold">
+                  {leave.status}
+                </td>
+                <td className="p-3 border text-center space-x-2">
+                  {(user.role === "ADMIN" || user.role === "MANAGER") && (
+                    <>
+                      <button
+                        disabled={leave.status !== "PENDING"}
+                        onClick={() => approveLeave(leave._id)}
+                        className="bg-green-600 text-white px-3 py-1 rounded disabled:opacity-40"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        disabled={leave.status !== "PENDING"}
+                        onClick={() => rejectLeave(leave._id)}
+                        className="bg-red-600 text-white px-3 py-1 rounded disabled:opacity-40"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                </td>
               </tr>
             ))}
+
+            {leaves.length === 0 && (
+              <tr>
+                <td colSpan="4" className="p-4 text-center text-gray-500">
+                  No leave records
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
     </div>
   );
-}
+};
+
+export default Leaves;

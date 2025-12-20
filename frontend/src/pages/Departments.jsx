@@ -22,35 +22,30 @@ export default function Departments() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Departments</h1>
-        <button
-          onClick={addDepartment}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Add Department
-        </button>
-      </div>
+    <div className="max-w-5xl mx-auto">
+      <h1 className="text-2xl font-semibold mb-6">Departments</h1>
 
-      {/* Input */}
-      <div className="mb-4">
+      <div className="flex gap-3 mb-6">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Department name"
           className="border p-2 rounded w-64"
         />
+        <button
+          onClick={addDepartment}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Add
+        </button>
       </div>
 
-      {/* Table */}
-      <div className="bg-white shadow rounded overflow-hidden">
-        <table className="w-full text-left">
+      <div className="bg-white shadow rounded">
+        <table className="w-full">
           <thead className="bg-gray-100">
             <tr>
-              <th className="p-3">#</th>
-              <th className="p-3">Department Name</th>
+              <th className="p-3 text-left">#</th>
+              <th className="p-3 text-left">Department</th>
             </tr>
           </thead>
           <tbody>
