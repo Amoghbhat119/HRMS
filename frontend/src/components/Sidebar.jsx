@@ -7,6 +7,8 @@ export default function Sidebar() {
   const linkClass =
     "block px-4 py-2 rounded hover:bg-gray-700 transition";
 
+  if (!user) return null;
+
   return (
     <aside className="w-64 bg-gray-900 text-gray-100 min-h-screen">
       <div className="p-5 text-xl font-bold border-b border-gray-700">
@@ -14,16 +16,61 @@ export default function Sidebar() {
       </div>
 
       <nav className="p-4 space-y-2 text-sm">
-        <NavLink className={linkClass} to="/dashboard">Dashboard</NavLink>
+        {/* COMMON */}
+        <NavLink className={linkClass} to="/dashboard">
+          Dashboard
+        </NavLink>
 
-        {user?.role === "ADMIN" && (
+        {/* ================= ADMIN ================= */}
+        {user.role === "ADMIN" && (
           <>
-            <NavLink className={linkClass} to="/users">Create Users</NavLink>
-            <NavLink className={linkClass} to="/employees">Employees</NavLink>
-            <NavLink className={linkClass} to="/departments">Departments</NavLink>
-            <NavLink className={linkClass} to="/attendance">Attendance</NavLink>
-            <NavLink className={linkClass} to="/leaves">Leaves</NavLink>
-            <NavLink className={linkClass} to="/payroll">Payroll</NavLink>
+            <NavLink className={linkClass} to="/users">
+              Create Users
+            </NavLink>
+
+            <NavLink className={linkClass} to="/employees">
+              Employees
+            </NavLink>
+
+            <NavLink className={linkClass} to="/departments">
+              Departments
+            </NavLink>
+
+            <NavLink className={linkClass} to="/attendance">
+              Attendance
+            </NavLink>
+
+            <NavLink className={linkClass} to="/leaves">
+              Leaves
+            </NavLink>
+
+            <NavLink className={linkClass} to="/payroll">
+              Payroll
+            </NavLink>
+          </>
+        )}
+
+        {/* ================= MANAGER ================= */}
+        {user.role === "MANAGER" && (
+          <>
+            <NavLink className={linkClass} to="/attendance">
+              Team Attendance
+            </NavLink>
+
+            <NavLink className={linkClass} to="/leaves">
+              Team Leaves
+            </NavLink>
+          </>
+        )}
+
+        {/* ================= EMPLOYEE ================= */}
+        {user.role === "EMPLOYEE" && (
+          <>
+
+
+            <NavLink className={linkClass} to="/leaves">
+              My Leaves
+            </NavLink>
           </>
         )}
       </nav>

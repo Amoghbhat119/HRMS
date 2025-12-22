@@ -1,22 +1,26 @@
 const router = require("express").Router();
-const { protect } = require("../middleware/auth.middleware");
+const { protect, authorize } = require("../middleware/auth.middleware");
 const {
   markAttendance,
   checkIn,
   checkOut,
   getAttendanceByEmployee,
   getMonthlySummary,
+  getAllAttendance  ,
+  getTeamAttendance
 } = require("../controllers/attendance.controller");
 
-// Admin / manual marking (still works)
-router.post("/mark", protect, markAttendance);
+// Admin only
+router.post("/mark", protect, authorize("ADMIN"), markAttendance);
 
-// Employee self-service attendance
-router.post("/check-in", protect, checkIn);
-router.post("/check-out", protect, checkOut);
+// Employee & Manager only
+router.post("/check-in", protect, authorize("EMPLOYEE", "MANAGER"), checkIn);
+router.post("/check-out", protect, authorize("EMPLOYEE", "MANAGER"), checkOut);
+router.get("/team", protect, authorize("MANAGER"), getTeamAttendance);
 
-// Attendance history & summary
 router.get("/employee/:id", protect, getAttendanceByEmployee);
 router.get("/summary", protect, getMonthlySummary);
+router.get("/", protect, getAllAttendance);
+
 
 module.exports = router;

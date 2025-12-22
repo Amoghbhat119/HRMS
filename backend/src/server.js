@@ -31,6 +31,8 @@ app.use("/api/leave", leaveRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/payroll", payrollRoutes);
 app.use("/api/report", reportRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+
 
 // ================= START SERVER =================
 const PORT = process.env.PORT || 5000;

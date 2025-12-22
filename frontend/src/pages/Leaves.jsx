@@ -3,7 +3,7 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 
 const Leaves = () => {
-  const { user } = useAuth(); // ✅ CORRECT
+  const { user } = useAuth();
   const [leaves, setLeaves] = useState([]);
   const [form, setForm] = useState({
     fromDate: "",
@@ -20,6 +20,7 @@ const Leaves = () => {
     fetchLeaves();
   }, []);
 
+  /* ================= APPLY LEAVE (EMPLOYEE ONLY) ================= */
   const applyLeave = async () => {
     if (!form.fromDate || !form.toDate) {
       alert("Please select dates");
@@ -36,41 +37,27 @@ const Leaves = () => {
     }
   };
 
+  /* ================= APPROVE / REJECT ================= */
   const approveLeave = async (id) => {
-    try {
-      await api.post(`/leave/approve/${id}`);
-      alert("Leave approved");
-      fetchLeaves();
-    } catch (err) {
-      alert(err.response?.data?.message);
-    }
+    await api.post(`/leave/approve/${id}`);
+    fetchLeaves();
   };
 
   const rejectLeave = async (id) => {
-    try {
-      await api.post(`/leave/reject/${id}`);
-      alert("Leave rejected");
-      fetchLeaves();
-    } catch (err) {
-      alert(err.response?.data?.message);
-    }
+    await api.post(`/leave/reject/${id}`);
+    fetchLeaves();
   };
 
-  // ⏳ User not loaded yet
   if (!user) {
-    return (
-      <div className="p-6 text-gray-500">
-        Loading leave data...
-      </div>
-    );
+    return <div className="p-6 text-gray-500">Loading leave data...</div>;
   }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-semibold mb-6">Leave Management</h1>
 
-      {/* APPLY LEAVE — ONLY EMPLOYEE / MANAGER */}
-      {(user.role === "EMPLOYEE" || user.role === "MANAGER") && (
+      {/* ================= APPLY LEAVE (EMPLOYEE ONLY) ================= */}
+      {user.role === "EMPLOYEE" && (
         <div className="bg-white p-5 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
           <input
             type="date"
@@ -106,53 +93,62 @@ const Leaves = () => {
         </div>
       )}
 
-      {/* LEAVE TABLE */}
+      {/* ================= LEAVE TABLE ================= */}
       <div className="bg-white rounded-lg shadow overflow-x-auto">
         <table className="w-full border">
           <thead className="bg-gray-200">
             <tr>
               <th className="p-3 border">Employee</th>
-              <th className="p-3 border">Period</th>
+              <th className="p-3 border">From</th>
+              <th className="p-3 border">To</th>
               <th className="p-3 border">Status</th>
-              <th className="p-3 border text-center">Action</th>
+
+              {(user.role === "ADMIN" || user.role === "MANAGER") && (
+                <th className="p-3 border text-center">Action</th>
+              )}
             </tr>
           </thead>
           <tbody>
             {leaves.map((leave) => (
               <tr key={leave._id}>
                 <td className="p-3 border">{leave.employee?.name}</td>
+
                 <td className="p-3 border">
-                  {leave.fromDate} → {leave.toDate}
+                  {new Date(leave.fromDate).toLocaleDateString()}
                 </td>
+
+                <td className="p-3 border">
+                  {new Date(leave.toDate).toLocaleDateString()}
+                </td>
+
                 <td className="p-3 border font-semibold">
                   {leave.status}
                 </td>
-                <td className="p-3 border text-center space-x-2">
-                  {(user.role === "ADMIN" || user.role === "MANAGER") && (
-                    <>
-                      <button
-                        disabled={leave.status !== "PENDING"}
-                        onClick={() => approveLeave(leave._id)}
-                        className="bg-green-600 text-white px-3 py-1 rounded disabled:opacity-40"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        disabled={leave.status !== "PENDING"}
-                        onClick={() => rejectLeave(leave._id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded disabled:opacity-40"
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </td>
+
+                {(user.role === "ADMIN" || user.role === "MANAGER") && (
+                  <td className="p-3 border text-center space-x-2">
+                    <button
+                      disabled={leave.status !== "PENDING"}
+                      onClick={() => approveLeave(leave._id)}
+                      className="bg-green-600 text-white px-3 py-1 rounded disabled:opacity-40"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      disabled={leave.status !== "PENDING"}
+                      onClick={() => rejectLeave(leave._id)}
+                      className="bg-red-600 text-white px-3 py-1 rounded disabled:opacity-40"
+                    >
+                      Reject
+                    </button>
+                  </td>
+                )}
               </tr>
             ))}
 
             {leaves.length === 0 && (
               <tr>
-                <td colSpan="4" className="p-4 text-center text-gray-500">
+                <td colSpan="5" className="p-4 text-center text-gray-500">
                   No leave records
                 </td>
               </tr>

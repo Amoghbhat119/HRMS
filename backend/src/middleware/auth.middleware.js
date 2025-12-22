@@ -1,14 +1,32 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const Employee = require("../models/Employee");
 
-exports.protect = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "No token" });
-
+exports.protect = async (req, res, next) => {
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token" });
+    }
+
+    const token = auth.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // attach user
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    req.user = user;
+
+    // attach employee (if exists)
+    const employee = await Employee.findOne({ user: user._id });
+    req.employee = employee || null;
+
     next();
-  } catch {
-    res.status(401).json({ message: "Invalid token" });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 
