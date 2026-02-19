@@ -1,99 +1,76 @@
 🏢 HRMS – Human Resource Management System (MERN Stack)
 
-A full-stack Human Resource Management System built using the MERN stack (MongoDB, Express.js, React.js, Node.js).
+A full-stack Human Resource Management System built using the MERN Stack (MongoDB, Express.js, React.js, Node.js).
 
-This system enables organizations to manage employees, teams, attendance, payroll, and leave workflows with role-based access control.
+This system allows organizations to manage users, teams, attendance, leave applications, and salary operations with secure role-based access control.
 
-🚀 Tech Stack
-Frontend
+🚀 Features
+🔐 Authentication & Authorization
 
-React.js
+JWT-based authentication
 
-React Router
+Role-based access control (Admin, Leader, Employee)
 
-Axios
+Secure password hashing using bcrypt
 
-Bootstrap
-
-React Toastify
-
-Backend
-
-Node.js
-
-Express.js
-
-MongoDB + Mongoose
-
-JWT Authentication
-
-Multer (File Upload)
-
-Bcrypt (Password Hashing)
-
-🔐 Authentication & Roles
-
-The system supports role-based access control:
-
-Admin
-
-Leader
-
-Employee
-
-📦 Features
 👥 User Management
 
-Create Admin, Leader, Employee
+Create Admin, Leader, and Employee accounts
 
-Update User Details
+Update user profiles
 
-Profile Image Upload
+Profile image upload
 
-Password Hashing (bcrypt)
+Unique email and username validation
 
-Role Restrictions
+Account status management (Active / Banned)
 
 🏢 Team Management
 
-Create Teams
+Create teams
 
-Assign Leader to Team
+Assign leader to a team
 
-Add/Remove Employees from Team
+Add employees to a team
 
-View Team Members
+Remove leader or members
+
+View team details and members
 
 Prevent invalid role reassignment
 
 🕒 Attendance Management
 
-Mark daily attendance
+Mark employee attendance
 
-Prevent duplicate marking
+Prevent duplicate attendance entries
 
 View attendance history
 
 📝 Leave Management
 
-Apply leave
+Apply for leave
 
-Admin approval/rejection
+Admin approval/rejection workflow
 
-Prevent duplicate leave entries
+Prevent duplicate leave applications
 
 💰 Salary Management
 
 Assign salary to employees
 
-Update salary
+Update salary records
 
-View salary history
+View salary details
 
+📂 File Upload
 
+Upload profile images using Multer
 
-⚙️ Installation Guide
-1️⃣ Clone Repository
+Store images in local storage directory
+
+⚙️ How to Clone and Run
+1️⃣ Clone the Repository
 git clone https://github.com/Amoghbhat119/HRMS.git
 cd HRMS
 
@@ -101,65 +78,70 @@ cd HRMS
 cd Easy-Employee-API
 npm install
 
-Create .env file
-ACCESS_TOKEN_SECRET_KEY=yourAccessSecret
-REFRESH_TOKEN_SECRET_KEY=yourRefreshSecret
+
+Create a .env file inside Easy-Employee-API with:
+
+ACCESS_TOKEN_SECRET_KEY=myAccessSecret
+REFRESH_TOKEN_SECRET_KEY=myRefreshSecret
 
 BASE_URL=http://localhost:5500
-DB_URL=mongodb://127.0.0.1:27017/EMS
+DB_URL=your_mongodb_connection_string_here
 CLIENT_URL=http://localhost:3000
 
+TYPE_FORGOT_PASSWORD=2
+WEBSITE_NAME=Easy Employee
 BCRYPT_PASSWORD_SALT_FACTOR=10
 
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=465
-SMTP_SECURE=true
+SMTP_SECURE=false
 SMTP_REQUIRE_TLS=true
-SMTP_AUTH_USER=yourEmail@gmail.com
-SMTP_AUTH_PASS=yourAppPassword
+SMTP_AUTH_USER=yourgmail
+SMTP_AUTH_PASS=your_generated_app_password_here
 
-Run Backend
+
+
+Start the backend server:
+
 npm run dev
 
 
-Server runs at:
+Backend runs at:
 
 http://localhost:5500
 
 🌐 Frontend Setup
+
+Open a new terminal:
+
 cd Easy-Employee
 npm install
 npm start
 
+Create a .env file inside Easy-Employee with:
+REACT_APP_BASE_URL=http://localhost:5500
 
-App runs at:
+
+Frontend runs at:
 
 http://localhost:3000
 
-🔑 Create Initial Admin
+🔑 Create Initial Admin User
 
-Run once in backend:
+Run this once inside the backend folder:
 
 node createAdmin.js
 
 
-Default Admin Credentials:
+Default credentials:
 
 Email: admin@gmail.com
 Password: admin123
 
+📌 Requirements
 
+Node.js (v16–18 recommended)
 
+MongoDB (Local or Atlas)
 
-🛡 Security Features
-
-JWT-based authentication
-
-Role-based authorization
-
-Password hashing with bcrypt
-
-Input validation using Mongoose
-
-Unique email & username enforcement
-
+npm
