@@ -1,86 +1,66 @@
-🏢 HRMS – Human Resource Management System (MERN Stack)
+# 🏢 HRMS – Human Resource Management System (MERN Stack)
 
-A full-stack Human Resource Management System built using the MERN Stack (MongoDB, Express.js, React.js, Node.js).
+A full-stack Human Resource Management System built using the **MERN Stack (MongoDB, Express.js, React.js, Node.js)**.
 
 This system allows organizations to manage users, teams, attendance, leave applications, and salary operations with secure role-based access control.
 
-🚀 Features
-🔐 Authentication & Authorization
+---
 
-JWT-based authentication
+## 🚀 Features
 
-Role-based access control (Admin, Leader, Employee)
+### 🔐 Authentication & Authorization
+- JWT-based authentication
+- Role-based access control (Admin, Leader, Employee)
+- Secure password hashing using bcrypt
 
-Secure password hashing using bcrypt
+### 👥 User Management
+- Create Admin, Leader, and Employee accounts
+- Update user profiles
+- Profile image upload
+- Unique email and username validation
+- Account status management (Active / Banned)
 
-👥 User Management
+### 🏢 Team Management
+- Create teams
+- Assign leader to a team
+- Add employees to a team
+- Remove leader or members
+- View team details and members
+- Prevent invalid role reassignment
 
-Create Admin, Leader, and Employee accounts
+### 🕒 Attendance Management
+- Mark employee attendance
+- Prevent duplicate attendance entries
+- View attendance history
 
-Update user profiles
+### 📝 Leave Management
+- Apply for leave
+- Admin approval/rejection workflow
+- Prevent duplicate leave applications
 
-Profile image upload
+### 💰 Salary Management
+- Assign salary to employees
+- Update salary records
+- View salary details
 
-Unique email and username validation
+### 📂 File Upload
+- Upload profile images using Multer
+- Store images in local storage directory
 
-Account status management (Active / Banned)
+---
 
-🏢 Team Management
+## ⚙️ How to Clone and Run
 
-Create teams
+### 1️⃣ Clone the Repository
 
-Assign leader to a team
-
-Add employees to a team
-
-Remove leader or members
-
-View team details and members
-
-Prevent invalid role reassignment
-
-🕒 Attendance Management
-
-Mark employee attendance
-
-Prevent duplicate attendance entries
-
-View attendance history
-
-📝 Leave Management
-
-Apply for leave
-
-Admin approval/rejection workflow
-
-Prevent duplicate leave applications
-
-💰 Salary Management
-
-Assign salary to employees
-
-Update salary records
-
-View salary details
-
-📂 File Upload
-
-Upload profile images using Multer
-
-Store images in local storage directory
-
-⚙️ How to Clone and Run
-1️⃣ Clone the Repository
+```bash
 git clone https://github.com/Amoghbhat119/HRMS.git
 cd HRMS
-
 🖥 Backend Setup
 cd Easy-Employee-API
 npm install
 
-
 Create a .env file inside Easy-Employee-API with:
-
 ACCESS_TOKEN_SECRET_KEY=myAccessSecret
 REFRESH_TOKEN_SECRET_KEY=myRefreshSecret
 
@@ -99,10 +79,22 @@ SMTP_REQUIRE_TLS=true
 SMTP_AUTH_USER=yourgmail
 SMTP_AUTH_PASS=your_generated_app_password_here
 
+Example MongoDB Connection Strings
+
+Local MongoDB
+
+DB_URL=mongodb://127.0.0.1:27017/EMS
 
 
-Start the backend server:
+MongoDB Atlas
 
+DB_URL=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/EMS?retryWrites=true&w=majority
+
+
+⚠ Replace all placeholder values with your actual credentials.
+⚠ Do not push your .env file to GitHub.
+
+Start Backend Server
 npm run dev
 
 
@@ -132,9 +124,7 @@ Run this once inside the backend folder:
 
 node createAdmin.js
 
-
-Default credentials:
-
+Default Credentials
 Email: admin@gmail.com
 Password: admin123
 
@@ -145,3 +135,11 @@ Node.js (v16–18 recommended)
 MongoDB (Local or Atlas)
 
 npm
+
+🛡 Important Notes
+
+Ensure MongoDB is running before starting backend.
+
+Use a Gmail App Password for SMTP (not your normal Gmail password).
+
+Add .env to .gitignore to protect sensitive data.
