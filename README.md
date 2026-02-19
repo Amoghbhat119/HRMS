@@ -49,18 +49,27 @@ This system allows organizations to manage users, teams, attendance, leave appli
 
 ---
 
-## ⚙️ How to Clone and Run
+# ⚙️ How to Clone and Run
 
-### 1️⃣ Clone the Repository
+## 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/Amoghbhat119/HRMS.git
 cd HRMS
-🖥 Backend Setup
+```
+
+---
+
+# 🖥 Backend Setup
+
+```bash
 cd Easy-Employee-API
 npm install
+```
 
-Create a .env file inside Easy-Employee-API with:
+### Create a `.env` file inside `Easy-Employee-API` and add:
+
+```env
 ACCESS_TOKEN_SECRET_KEY=myAccessSecret
 REFRESH_TOKEN_SECRET_KEY=myRefreshSecret
 
@@ -78,68 +87,90 @@ SMTP_SECURE=false
 SMTP_REQUIRE_TLS=true
 SMTP_AUTH_USER=yourgmail
 SMTP_AUTH_PASS=your_generated_app_password_here
+```
 
-Example MongoDB Connection Strings
+---
 
-Local MongoDB
+## 📌 Example MongoDB Connection Strings
 
+### Local MongoDB
+```env
 DB_URL=mongodb://127.0.0.1:27017/EMS
+```
 
-
-MongoDB Atlas
-
+### MongoDB Atlas
+```env
 DB_URL=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/EMS?retryWrites=true&w=majority
+```
 
+⚠ Replace all placeholder values with your actual credentials.  
+⚠ Do NOT push your `.env` file to GitHub.
 
-⚠ Replace all placeholder values with your actual credentials.
-⚠ Do not push your .env file to GitHub.
+---
 
-Start Backend Server
+## ▶ Start Backend Server
+
+```bash
 npm run dev
-
+```
 
 Backend runs at:
 
+```
 http://localhost:5500
+```
 
-🌐 Frontend Setup
+---
+
+# 🌐 Frontend Setup
 
 Open a new terminal:
 
+```bash
 cd Easy-Employee
 npm install
 npm start
+```
 
-Create a .env file inside Easy-Employee with:
+### Create a `.env` file inside `Easy-Employee`:
+
+```env
 REACT_APP_BASE_URL=http://localhost:5500
-
+```
 
 Frontend runs at:
 
+```
 http://localhost:3000
+```
 
-🔑 Create Initial Admin User
+---
+
+# 🔑 Create Initial Admin User
 
 Run this once inside the backend folder:
 
+```bash
 node createAdmin.js
+```
 
-Default Credentials
-Email: admin@gmail.com
-Password: admin123
+### Default Credentials
 
-📌 Requirements
+- Email: `admin@gmail.com`
+- Password: `admin123`
 
-Node.js (v16–18 recommended)
+---
 
-MongoDB (Local or Atlas)
+# 📌 Requirements
 
-npm
+- Node.js (v16–18 recommended)
+- MongoDB (Local or Atlas)
+- npm
 
-🛡 Important Notes
+---
 
-Ensure MongoDB is running before starting backend.
+# 🛡 Important Notes
 
-Use a Gmail App Password for SMTP (not your normal Gmail password).
-
-Add .env to .gitignore to protect sensitive data.
+- Ensure MongoDB is running before starting backend.
+- Use a Gmail App Password for SMTP (not your normal Gmail password).
+- Add `.env` to `.gitignore` to protect sensitive data.
