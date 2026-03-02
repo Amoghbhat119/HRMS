@@ -23,3 +23,12 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Uploaded files (backend)
+Easy-Employee-API/storage/
+
+# Screenshots (frontend)
+Easy-Employee/screenshots/
+
+# Logs
+logs/
+*.log
